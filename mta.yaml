@@ -1,0 +1,101 @@
+_schema-version: "3.1"
+ID: task02
+description: A simple CAP project.
+version: 1.0.0
+modules:
+- name: task02-srv
+  type: nodejs
+  path: gen/srv
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+  build-parameters:
+    builder: npm
+- name: task02-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: task02-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - app1.zip
+      name: app1
+      target-path: resources/
+    - artifacts:
+      - task02.zip
+      name: task02
+      target-path: resources/
+    - artifacts:
+      - ovrview.zip
+      name: ovrview
+      target-path: resources/
+- name: app1
+  type: html5
+  path: app/app1
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: task02
+  type: html5
+  path: app/task02
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: ovrview
+  type: html5
+  path: app/ovrview
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: task02-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: task02-html5-srv
+    service-plan: app-host
+- name: task02-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: false
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: task02-destination-service
+    service-plan: lite
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npx cds build --production

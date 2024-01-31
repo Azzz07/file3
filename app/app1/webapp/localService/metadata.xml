@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="Ms" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="student" EntityType="Ms.student">
+                    <NavigationPropertyBinding Path="studenttoenrollment" Target="enrollment"/>
+                </EntitySet>
+                <EntitySet Name="enrollment" EntityType="Ms.enrollment">
+                    <NavigationPropertyBinding Path="studenttoid" Target="student"/>
+                    <NavigationPropertyBinding Path="coursecytoenrlment" Target="coursebycycle"/>
+                </EntitySet>
+                <EntitySet Name="course" EntityType="Ms.course">
+                    <NavigationPropertyBinding Path="cousretocoursebycycle" Target="coursebycycle"/>
+                </EntitySet>
+                <EntitySet Name="coursebycycle" EntityType="Ms.coursebycycle">
+                    <NavigationPropertyBinding Path="coursebycycletoenrlmnt" Target="enrollment"/>
+                    <NavigationPropertyBinding Path="cousebycletocourse" Target="course"/>
+                </EntitySet>
+            </EntityContainer>
+            <EntityType Name="student">
+                <Key>
+                    <PropertyRef Name="student_id"/>
+                </Key>
+                <Property Name="student_id" Type="Edm.String" Nullable="false"/>
+                <Property Name="student_name" Type="Edm.String"/>
+                <Property Name="email" Type="Edm.String"/>
+                <Property Name="birthdate" Type="Edm.Date"/>
+                <Property Name="phoneno" Type="Edm.Int32"/>
+                <NavigationProperty Name="studenttoenrollment" Type="Collection(Ms.enrollment)" Partner="studenttoid">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="enrollment">
+                <Key>
+                    <PropertyRef Name="courseid"/>
+                    <PropertyRef Name="cycleid"/>
+                    <PropertyRef Name="student_id"/>
+                </Key>
+                <Property Name="courseid" Type="Edm.String" Nullable="false"/>
+                <Property Name="cycleid" Type="Edm.String" Nullable="false"/>
+                <Property Name="student_id" Type="Edm.String" Nullable="false"/>
+                <Property Name="enrollmentdate" Type="Edm.Date"/>
+                <Property Name="cancelled" Type="Edm.Boolean"/>
+                <Property Name="cancellationreason" Type="Edm.String"/>
+                <NavigationProperty Name="studenttoid" Type="Ms.student" Partner="studenttoenrollment">
+                    <ReferentialConstraint Property="student_id" ReferencedProperty="student_id"/>
+                </NavigationProperty>
+                <NavigationProperty Name="coursecytoenrlment" Type="Ms.coursebycycle" Partner="coursebycycletoenrlmnt"/>
+            </EntityType>
+            <EntityType Name="course">
+                <Property Name="courseid" Type="Edm.String"/>
+                <Property Name="cousredescription" Type="Edm.String"/>
+                <Property Name="abstract" Type="Edm.String"/>
+                <Property Name="bibliography" Type="Edm.String"/>
+                <NavigationProperty Name="cousretocoursebycycle" Type="Collection(Ms.coursebycycle)" Partner="cousebycletocourse">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="coursebycycle">
+                <Key>
+                    <PropertyRef Name="courseid"/>
+                    <PropertyRef Name="cycleid"/>
+                </Key>
+                <Property Name="courseid" Type="Edm.String" Nullable="false"/>
+                <Property Name="cycleid" Type="Edm.String" Nullable="false"/>
+                <Property Name="coursestartdate" Type="Edm.Date"/>
+                <Property Name="courseenddate" Type="Edm.Date"/>
+                <NavigationProperty Name="coursebycycletoenrlmnt" Type="Collection(Ms.enrollment)" Partner="coursecytoenrlment">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="cousebycletocourse" Type="Ms.course" Partner="cousretocoursebycycle"/>
+            </EntityType>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

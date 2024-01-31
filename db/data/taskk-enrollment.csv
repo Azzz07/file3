@@ -1,0 +1,7 @@
+courseid,cycleid,student_id,enrollmentdate,cancelled, cancellationreason
+1,1st,101,2021-06-15,false,na
+2,2nd,102,2022-06-15,false,na
+3,1st,103,2023-06-15,false,na
+3,2nd,103,2024-06-15,false,na
+4,1st,104,2023-06015,false,na
+4,2nd,101,2022-06-15,false,na
