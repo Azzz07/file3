@@ -5,4 +5,9 @@ service Ms{
     entity enrollment as projection on My.enrollment;
     entity course as projection on My.course;
     entity coursebycycle as projection on My.coursebycycle;   
+
+
+
+
+    
 }
